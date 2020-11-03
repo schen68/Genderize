@@ -1,4 +1,5 @@
 # Genderize CSV
+Crediting: jholtmann - Original creater of this script
 
 **Python genderize.io script**
 
