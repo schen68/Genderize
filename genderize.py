@@ -5,6 +5,7 @@ import os.path
 import time
 import argparse
 import logging
+import re
 
 import jpyhelper as jpyh
 
@@ -59,13 +60,19 @@ def genderize(args):
     #Open ifile
     with open(ifile, 'r', encoding="utf8") as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',', skipinitialspace=True)
-        first_name = []
-        for row in readCSV: #Read CSV into first_name list
-            first_name.append(row[0])
-            ##first_name.append(row)
+        headers = next(readCSV) # take the first row
 
-        if args.noheader == False:
-            first_name.pop(0) #Remove header
+        # [Chen]: use re.search to find the specific column name, match string "name"
+        specific_header_index = 0
+        for header in headers:
+            if re.search("name", header, re.I) != None:
+                break
+            specific_header_index += 1
+
+        # [Chen]: store rows without headers as a list
+        rest = list(readCSV)
+        # [Chen]: extract the first_name column
+        first_name = [row[specific_header_index].strip() for row in rest]
 
         o_first_name = list()
         for l in first_name:
@@ -99,9 +106,16 @@ def genderize(args):
         gender_responses = list()
         with open(ofile, 'w', newline='', encoding="utf8") as f:
             writer = csv.writer(f)
-            writer.writerow(list(["first_name", "gender", "probability", "count"]))
+
+            # [Chen]: generate different headers by'-ORV' argument
+            if args.override == True:
+                headers.extend(["female", "male"])
+            else:
+                headers.extend(["gender", "probability", "count"])
+            writer.writerow(headers)
             chunks_len = len(chunks)
             stopped = False
+
             for index, chunk in enumerate(chunks):
                 if stopped:
                     break
@@ -136,9 +150,22 @@ def genderize(args):
                     response_time.append(time.time() - start)
                     print("Processed chunk " + str(index + 1) + " of " + str(chunks_len) + " -- Time remaining (est.): " + \
                         str( round( (sum(response_time) / len(response_time) * (chunks_len - index - 1)), 3)) + "s")
-
-                    for data in dataset:
-                        writer.writerow(data.values())
+                    
+                    # [Chen]: Combine original data and the response: if go with '-OVR', convert gender to 0/1; if go without '-OVR', pick up gender, probability, count
+                    if args.override == True:
+                        for data in dataset:
+                            append_response = []
+                            if data.get('gender'): # null check
+                                female = 1 if data.get('gender') == 'female' else 0
+                                append_response = [female, female ^ 1] # xor for 0 <=> 1
+                            else:
+                                append_response = [0, 0]
+                            writer.writerow([*rest[0], *append_response])
+                            rest.pop(0)
+                    else:
+                        for data in dataset:
+                            writer.writerow([*rest[0], *list(data.values())[1:]])
+                            rest.pop(0)
                     break
 
             if args.auto == True:
@@ -147,6 +174,8 @@ def genderize(args):
 
                 #Create master dict
                 gender_dict = dict()
+
+                print(gender_dict)
                 for response in gender_responses:
                     for d in response:
                         gender_dict[d.get("name")] = [d.get("gender"), d.get("probability"), d.get("count")]
@@ -170,7 +199,9 @@ if __name__ == "__main__":
     required.add_argument('-o','--output', help='Output file name', required=True)
     parser.add_argument('-k','--key', help='API key', required=False, default="NO_API")
     parser.add_argument('-c','--catch', help='Try to handle errors gracefully', required=False, action='store_true', default=True)
-    parser.add_argument('-a','--auto', help='Automatically complete gender for identical first_name', required=False, action='store_true', default=False)
-    parser.add_argument('-nh','--noheader', help='Input has no header row', required=False, action='store_true', default=False)
+    parser.add_argument('-a', '--auto', help='Automatically complete gender for identical first_name', required=False,
+                        action='store_true', default=False)
 
+    parser.add_argument('-OVR','--override', help='override default column output', required=False, action='store_true', default=False)
+    
     genderize(parser.parse_args())

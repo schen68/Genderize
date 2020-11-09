@@ -1,10 +1,62 @@
 # Genderize CSV
 Crediting: jholtmann - Original creater of this script
 
-**Python genderize.io script**
+## Assignment requirements:
+1. Read all columns and find the specific column
+2. Add response to the copy of original spreadsheet
+3. -OVR
 
-This script takes a single column CSV file with a header and feeds the names to genderize.io. It outputs a CSV file with the name, gender, probability, and count of every name.
-
+## How To:
+1. For requirement 1
+    * Read csv file  
+    * Extract header, and use regex module to find the specific column (the first name column)  
+      ```python
+      specific_header_index = 0
+      for header in headers:
+        if re.search("name", header, re.I) != None:
+          break
+        specific_header_index += 1
+      ```
+    * Store rest content to a dict; the key is the first name column
+2. For requirement 2
+    * Generate new headers for the spreadsheet by args.override
+    * Write original rows and new response to the output file.
+      ```python
+      for data in dataset:
+        writer.writerow([*rest[0], *list(data.values())[1:]])
+        rest.pop(0)
+      ```
+3. For requirement 3
+    * Add argument configuration for '-OVR' to the **ArgumentParser**
+    * use args.override to generate new header
+    * use args.override to generate the combination of original data and new response
+      ```python
+      if args.override == True:
+        for data in dataset:
+            append_response = []
+            if data.get('gender'): # null check
+                female = 1 if data.get('gender') == 'female' else 0
+                append_response = [female, female ^ 1] # xor for 0 <=> 1
+            else:
+                append_response = [0, 0]
+            writer.writerow([*rest[0], *append_response])
+            rest.pop(0)
+      ```
+## Result - Sample
+1. Single column
+    * Input file:  
+    ![img](http://m.imeitou.com/uploads/allimg/190221/3-1Z221113343.jpg)
+    * Output file without ***"-ORV"*** argument:  
+    ![img](http://m.imeitou.com/uploads/allimg/190221/3-1Z221113343.jpg)
+    * Output file with :  
+    ![img](http://m.imeitou.com/uploads/allimg/190221/3-1Z221113343.jpg)
+2. Multi-column
+    * Input file:  
+    ![img](http://m.imeitou.com/uploads/allimg/190221/3-1Z221113343.jpg)
+    * Output file without ***"-ORV"*** argument:  
+    ![img](http://m.imeitou.com/uploads/allimg/190221/3-1Z221113343.jpg)
+    * Output file with ***"-ORV"*** argument:  
+    ![img](http://m.imeitou.com/uploads/allimg/190221/3-1Z221113343.jpg)
 ### Usage:
 ```sh
 python genderize.py [-h] -i INPUT -o OUTPUT [-k KEY] [-c] [-ns] [-nh]
