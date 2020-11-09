@@ -44,14 +44,14 @@ Crediting: jholtmann - Original creater of this script
             rest.pop(0)
       ```
 ## Result - Sample
-1. Single column
+###1. Single column
     * Input file:  
     ![img](https://github.com/schen68/Genderize/blob/main/pictures/in-single-col.png)
     * Output file without ***"-ORV"*** argument:  
     ![img](https://github.com/schen68/Genderize/blob/main/pictures/out-single-col.png)
     * Output file with ***"-ORV"*** argument:  
     ![img](https://github.com/schen68/Genderize/blob/main/pictures/out-single-col-OVR.png)
-2. Multi-column
+###2. Multi-column
     * Input file:  
     ![img](https://github.com/schen68/Genderize/blob/main/pictures/in-multi-col.png)
     * Output file without ***"-ORV"*** argument:  
@@ -63,7 +63,7 @@ Crediting: jholtmann - Original creater of this script
 ```sh
 python genderize.py -i test/genderize_test_file.csv -o test/out.csv --catch -OVR
 ```
-
+***Direction***
 ```sh
 python genderize.py [-h] -i INPUT -o OUTPUT [-k KEY] [-c] [-ns] [-nh]
 ```
