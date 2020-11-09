@@ -19,6 +19,9 @@ Crediting: jholtmann - Original creater of this script
         specific_header_index += 1
       ```
     * Store rest content as a list
+        ```python
+        rest = list(readCSV)
+        ```
 2. For requirement 2
     * Generate new headers for the spreadsheet
     * Write original rows and new response to the output file.
