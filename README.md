@@ -11,13 +11,14 @@ Crediting: jholtmann - Original creater of this script
     * Read csv file  
     * Extract header, and use regex module to find the specific column (the first name column)  
       ```python
+      headers = next(readCSV) # take the first row
       specific_header_index = 0
       for header in headers:
         if re.search("name", header, re.I) != None:
           break
         specific_header_index += 1
       ```
-    * Store rest content to a dict; the key is the first name column
+    * Store rest content as a list
 2. For requirement 2
     * Generate new headers for the spreadsheet by args.override
     * Write original rows and new response to the output file.
@@ -45,19 +46,24 @@ Crediting: jholtmann - Original creater of this script
 ## Result - Sample
 1. Single column
     * Input file:  
-    ![img](http://m.imeitou.com/uploads/allimg/190221/3-1Z221113343.jpg)
+    ![img](https://github.com/schen68/Genderize/blob/main/pictures/in-single-col.png)
     * Output file without ***"-ORV"*** argument:  
-    ![img](http://m.imeitou.com/uploads/allimg/190221/3-1Z221113343.jpg)
-    * Output file with :  
-    ![img](http://m.imeitou.com/uploads/allimg/190221/3-1Z221113343.jpg)
+    ![img](https://github.com/schen68/Genderize/blob/main/pictures/out-single-col.png)
+    * Output file with ***"-ORV"*** argument:  
+    ![img](https://github.com/schen68/Genderize/blob/main/pictures/out-single-col-OVR.png)
 2. Multi-column
     * Input file:  
-    ![img](http://m.imeitou.com/uploads/allimg/190221/3-1Z221113343.jpg)
+    ![img](https://github.com/schen68/Genderize/blob/main/pictures/in-multi-col.png)
     * Output file without ***"-ORV"*** argument:  
-    ![img](http://m.imeitou.com/uploads/allimg/190221/3-1Z221113343.jpg)
+    ![img](https://github.com/schen68/Genderize/blob/main/pictures/out-multi-col.png)
     * Output file with ***"-ORV"*** argument:  
-    ![img](http://m.imeitou.com/uploads/allimg/190221/3-1Z221113343.jpg)
+    ![img](https://github.com/schen68/Genderize/blob/main/pictures/out-multi-col_OVR.png)
 ### Usage:
+***Run a test***
+```sh
+python genderize.py -i test/genderize_test_file.csv -o test/out.csv --catch -OVR
+```
+
 ```sh
 python genderize.py [-h] -i INPUT -o OUTPUT [-k KEY] [-c] [-ns] [-nh]
 ```
