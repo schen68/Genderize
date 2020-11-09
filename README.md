@@ -9,7 +9,7 @@ Crediting: jholtmann - Original creater of this script
 ## How To:
 1. For requirement 1
     * Read csv file  
-    * Extract header, and use regex module to find the specific column (the first name column)  
+    * Extract header, and use **regex** module to find the specific column (the first name column)  
       ```python
       headers = next(readCSV) # take the first row
       specific_header_index = 0
@@ -27,7 +27,7 @@ Crediting: jholtmann - Original creater of this script
     * Write original rows and new response to the output file.
       ```python
       for data in dataset:
-        writer.writerow([*rest[0], *list(data.values())[1:]])
+        writer.writerow([*rest[0], *list(data.values())[1:]]) # spread list
         rest.pop(0)
       ```
 3. For requirement 3
