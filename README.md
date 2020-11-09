@@ -20,7 +20,7 @@ Crediting: jholtmann - Original creater of this script
       ```
     * Store rest content as a list
 2. For requirement 2
-    * Generate new headers for the spreadsheet by args.override
+    * Generate new headers for the spreadsheet
     * Write original rows and new response to the output file.
       ```python
       for data in dataset:
@@ -30,6 +30,13 @@ Crediting: jholtmann - Original creater of this script
 3. For requirement 3
     * Add argument configuration for '-OVR' to the **ArgumentParser**
     * use args.override to generate new header
+        ```python
+        if args.override == True:
+           headers.extend(["female", "male"])
+        else:
+           headers.extend(["gender", "probability", "count"])
+        writer.writerow(headers)
+        ```
     * use args.override to generate the combination of original data and new response
       ```python
       if args.override == True:
